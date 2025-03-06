@@ -34,7 +34,7 @@ namespace IcerikUretimSistemi.UI.Forms
             _receiverID = receiverID;
 
             // Timer'ı başlatıyoruz, her 5 saniyede bir PollingTimer_Tick metodunu çağıracak
-            _pollingTimer = new System.Threading.Timer(PollingTimer_Tick, null, 0, 5000);
+            _pollingTimer = new System.Threading.Timer(PollingTimer_Tick, null, 0, 2000);
         }
 
         private void MessageSendForm_Load(object sender, EventArgs e)
