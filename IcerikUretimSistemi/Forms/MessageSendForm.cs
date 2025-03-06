@@ -2,10 +2,6 @@
 using IcerikUretimSistemi.DataAccess.Context;
 using IcerikUretimSistemi.DataAccess.Repositories;
 using IcerikUretimSistemi.UI.Forms.Controls;
-using System;
-using System.Linq;
-using System.Windows.Forms;
-using System.Threading;
 
 namespace IcerikUretimSistemi.UI.Forms
 {
@@ -17,7 +13,6 @@ namespace IcerikUretimSistemi.UI.Forms
         private readonly Guid _currentID;
         private readonly Guid _receiverID;
 
-        private readonly System.Threading.Timer _pollingTimer;
 
         public MessageSendForm(Guid currentID, Guid receiverID)
         {
@@ -33,9 +28,20 @@ namespace IcerikUretimSistemi.UI.Forms
             _currentID = currentID;
             _receiverID = receiverID;
 
-            // Timer'ı başlatıyoruz, her 5 saniyede bir PollingTimer_Tick metodunu çağıracak
-            _pollingTimer = new System.Threading.Timer(PollingTimer_Tick, null, 0, 2000);
+            StartPollingAsync();
         }
+        private async void StartPollingAsync()
+        {
+            while (true)
+            {
+                // Her 2 saniyede bir mesajları yükleyin
+                LoadMessages();
+
+                // 2 saniye bekleyin
+                await Task.Delay(2000); // 2000 ms = 2 saniye
+            }
+        }
+
 
         private void MessageSendForm_Load(object sender, EventArgs e)
         {
@@ -106,13 +112,6 @@ namespace IcerikUretimSistemi.UI.Forms
             {
                 MessageBox.Show($"Mesaj gönderme hatası: {ex.Message}");
             }
-        }
-
-        // Timer tetiklendiğinde çağrılacak metod
-        private void PollingTimer_Tick(object state)
-        {
-            // Mesajları güncellemek için LoadMessages metodunu çağırıyoruz
-            LoadMessages();
         }
 
         private void iconBack_Click(object sender, EventArgs e)
